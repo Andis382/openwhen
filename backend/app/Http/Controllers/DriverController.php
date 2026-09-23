@@ -146,6 +146,7 @@ class DriverController extends Controller
     {
         $trip ??= $stop->trip;
         $weekday = $trip->weekday();
+        $eta = $stop->planned_eta_minute ?? $trip->start_minute;
         $shop = $stop->shop;
         $model = $this->hours->model($shop);
 
@@ -163,10 +164,10 @@ class DriverController extends Controller
                 'contactName' => $shop->contact_name,
                 'accessNotes' => $shop->access_notes,
             ],
-            'hint' => OpenState::at($model, $weekday, $stop->planned_eta_minute ?? $trip->start_minute),
+            'hint' => OpenState::at($model, $weekday, $eta),
             'rules' => array_values(array_map(
                 fn (HoursRule $r) => $r->toArray(),
-                array_filter($this->hours->rules($shop), fn (HoursRule $r) => $r->appliesTo($weekday)),
+                array_filter($this->hours->rules($shop), fn (HoursRule $r) => $r->appliesTo($weekday) && $r->isNear($eta)),
             )),
         ] + $stop->outcomeApi();
     }

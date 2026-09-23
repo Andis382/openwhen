@@ -128,7 +128,7 @@ class TripPlanner
                     'warning' => OpenState::arrivalWarning($model, $weekday, $visit['eta']),
                     'rules' => array_values(array_map(
                         fn (HoursRule $r) => $r->toArray(),
-                        array_filter($this->hours->rules($shop), fn (HoursRule $r) => $r->appliesTo($weekday)),
+                        array_filter($this->hours->rules($shop), fn (HoursRule $r) => $r->appliesTo($weekday) && $r->isNear($visit['eta'])),
                     )),
                     'amountDueCents' => $stop->amount_due_cents,
                     'outcome' => $stop->outcome,

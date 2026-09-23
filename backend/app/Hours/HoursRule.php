@@ -35,6 +35,22 @@ final class HoursRule
         return in_array($weekday, $this->weekdays, true);
     }
 
+    /**
+     * Whether the shut stretch this rule describes lies within $margin minutes of an arrival:
+     * "never open before 07:00" says nothing useful about a stop planned for 09:30.
+     */
+    public function isNear(int $minuteOfDay, int $margin = 90): bool
+    {
+        [$shutFrom, $shutTo] = match ($this->type) {
+            self::OPENS_AFTER => [Slots::FIRST_MINUTE, $this->from],
+            self::CLOSED_AFTER => [$this->from, Slots::LAST_MINUTE],
+            self::CLOSED_WINDOW => [$this->from, $this->to],
+            default => [0, 24 * 60],
+        };
+
+        return $minuteOfDay >= $shutFrom - $margin && $minuteOfDay < $shutTo + $margin;
+    }
+
     /** @return array{type: string, weekdays: list<int>, from: ?string, to: ?string, open: int, total: int} */
     public function toArray(): array
     {
