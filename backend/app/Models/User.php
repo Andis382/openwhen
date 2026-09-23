@@ -12,12 +12,20 @@ class User extends Authenticatable
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable;
 
+    /** Runs the business: plans routes, sees everything, manages the team. */
     public const OWNER = 'OWNER';
 
-    public const MEMBER = 'MEMBER';
+    /** Plans and publishes routes like the owner, without team or company settings. */
+    public const DISPATCHER = 'DISPATCHER';
+
+    /** Drives: sees only the trips assigned to them. */
+    public const DRIVER = 'DRIVER';
+
+    /** Roles that plan routes and see every shop. */
+    public const PLANNERS = [self::OWNER, self::DISPATCHER];
 
     /** Roles an owner may hand out with a join link. */
-    public const INVITABLE_ROLES = [self::MEMBER];
+    public const INVITABLE_ROLES = [self::DRIVER, self::DISPATCHER];
 
     protected $fillable = ['organization_id', 'name', 'email', 'password', 'role', 'locale', 'last_login_at'];
 

@@ -25,12 +25,22 @@ class OrganizationController extends Controller
             'locale' => ['nullable', Rule::in(['en', 'sq'])],
             'timezone' => ['nullable', 'string', Rule::in(DateTimeZone::listIdentifiers())],
             'currency' => ['nullable', 'string', 'regex:/^[A-Z]{3}$/'],
+            'depotName' => ['nullable', 'string', 'max:160'],
+            'depotLat' => ['nullable', 'required_with:depotLng', 'numeric', 'between:-90,90'],
+            'depotLng' => ['nullable', 'required_with:depotLat', 'numeric', 'between:-180,180'],
         ]);
         $org = $request->user()->organization;
         $org->fill([
             'name' => trim($data['name']),
             'phone' => Phones::normalize($data['phone'] ?? null),
         ]);
+        if ($request->has('depotLat')) {
+            $org->fill([
+                'depot_name' => isset($data['depotName']) ? trim($data['depotName']) : null,
+                'depot_lat' => $data['depotLat'] ?? null,
+                'depot_lng' => $data['depotLng'] ?? null,
+            ]);
+        }
         foreach (['locale', 'timezone', 'currency'] as $field) {
             if (! empty($data[$field])) {
                 $org->{$field} = $data[$field];

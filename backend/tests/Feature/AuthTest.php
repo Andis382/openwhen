@@ -68,7 +68,7 @@ class AuthTest extends TestCase
     public function test_invitation_lets_a_colleague_join_once(): void
     {
         $owner = User::factory()->create();
-        $url = $this->actingAs($owner)->postJson('/api/team/invitations', ['role' => 'MEMBER', 'name' => 'Driton'])
+        $url = $this->actingAs($owner)->postJson('/api/team/invitations', ['role' => 'DRIVER', 'name' => 'Driton'])
             ->assertCreated()
             ->json('url');
         $token = basename($url);
@@ -81,7 +81,7 @@ class AuthTest extends TestCase
 
         $this->postJson('/api/auth/join', [
             'token' => $token, 'name' => 'Driton', 'email' => 'driton@example.com', 'password' => 'secret123',
-        ])->assertCreated()->assertJsonPath('user.role', 'MEMBER');
+        ])->assertCreated()->assertJsonPath('user.role', 'DRIVER');
 
         $this->assertSame($owner->organization_id, User::where('email', 'driton@example.com')->value('organization_id'));
 
@@ -89,10 +89,10 @@ class AuthTest extends TestCase
         $this->getJson("/api/auth/invitations/{$token}")->assertStatus(410);
     }
 
-    public function test_members_cannot_invite(): void
+    public function test_drivers_cannot_invite(): void
     {
-        $member = User::factory()->member()->create();
-        $this->actingAs($member)->postJson('/api/team/invitations', ['role' => 'MEMBER'])->assertForbidden();
+        $driver = User::factory()->driver()->create();
+        $this->actingAs($driver)->postJson('/api/team/invitations', ['role' => 'DRIVER'])->assertForbidden();
     }
 
     public function test_team_lists_only_your_own_organisation(): void

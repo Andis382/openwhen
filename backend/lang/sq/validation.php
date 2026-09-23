@@ -90,6 +90,7 @@ return [
     'uploaded' => 'Ngarkimi dështoi. Provoni përsëri.',
     'url' => 'Shkruani një lidhje të vlefshme.',
     'uuid' => 'Kjo vlerë nuk është e vlefshme.',
+    'phone' => 'Shkruani një numër telefoni, p.sh. 069 123 4567.',
 
     'custom' => [
         'email' => [

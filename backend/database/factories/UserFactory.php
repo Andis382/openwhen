@@ -25,8 +25,13 @@ class UserFactory extends Factory
         ];
     }
 
-    public function member(): static
+    public function driver(): static
     {
-        return $this->state(fn () => ['role' => User::MEMBER]);
+        return $this->state(fn () => ['role' => User::DRIVER]);
+    }
+
+    public function dispatcher(): static
+    {
+        return $this->state(fn () => ['role' => User::DISPATCHER]);
     }
 }

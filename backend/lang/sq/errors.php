@@ -8,4 +8,7 @@ return [
     'cannot_remove_self' => 'Nuk mund ta hiqni veten.',
     'file_missing' => 'Zgjidhni fillimisht një skedar.',
     'file_type' => 'Ky lloj skedari nuk mbështetet.',
+    'trip_started' => 'Ky udhëtim ka nisur, ndaj plani i tij nuk mund të ndryshohet më.',
+    'driver_needed' => 'Zgjidhni një shofer para publikimit.',
+    'order_mismatch' => 'Renditja e re duhet të përmbajë çdo ndalesë të udhëtimit një herë.',
 ];

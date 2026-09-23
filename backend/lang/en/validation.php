@@ -93,6 +93,7 @@ return [
     'uploaded' => 'The upload failed. Try again.',
     'url' => 'Enter a valid link.',
     'uuid' => 'This value is not valid.',
+    'phone' => 'Enter a phone number, e.g. 069 123 4567.',
 
     'custom' => [
         'email' => [

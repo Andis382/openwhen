@@ -31,6 +31,18 @@ class TeamController extends Controller
         return response()->json(['members' => $members, 'invitations' => $pending]);
     }
 
+    /** People a route or trip can be given to. Users carry no tenant scope, hence the explicit filter. */
+    public function drivers(Request $request): JsonResponse
+    {
+        return response()->json(
+            User::where('organization_id', $request->user()->organization_id)
+                ->where('role', User::DRIVER)
+                ->orderBy('name')
+                ->get(['id', 'name'])
+                ->map(fn (User $u) => ['id' => $u->id, 'name' => $u->name]),
+        );
+    }
+
     public function invite(Request $request): JsonResponse
     {
         $this->ownerOnly($request);
