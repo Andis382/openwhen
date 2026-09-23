@@ -3,12 +3,12 @@ import { onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
 import './map.css'
-import { ATTRIBUTION, TILES, statePin } from './pins'
+import { ATTRIBUTION, TILES, depotPin, statePin } from './pins'
 
 /** Click or tap the map to place a point; the marker can also be dragged. */
 const lat = defineModel<number | null>('lat', { required: true })
 const lng = defineModel<number | null>('lng', { required: true })
-withDefaults(defineProps<{ height?: number; label: string }>(), { height: 280 })
+const props = withDefaults(defineProps<{ height?: number; label: string; depot?: boolean }>(), { height: 280, depot: false })
 
 const el = ref<HTMLElement | null>(null)
 let map: L.Map | null = null
@@ -31,7 +31,7 @@ function sync() {
   if (marker) {
     marker.setLatLng(position)
   } else {
-    marker = L.marker(position, { icon: statePin('open', true), draggable: true, keyboard: false }).addTo(map)
+    marker = L.marker(position, { icon: props.depot ? depotPin() : statePin('open', true), draggable: true, keyboard: false }).addTo(map)
     marker.on('dragend', () => marker && place(marker.getLatLng()))
   }
 }

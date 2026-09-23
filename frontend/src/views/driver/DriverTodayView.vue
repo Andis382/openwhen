@@ -34,6 +34,7 @@ const delivering = ref<{ stop: LocalStop; revisit: boolean } | null>(null)
 const deliveredOpen = ref(false)
 const changing = ref<{ stop: LocalStop; revisit: boolean } | null>(null)
 const showDone = ref(false)
+const showUpcoming = ref(false)
 
 onMounted(async () => {
   driver.watch()
@@ -95,6 +96,10 @@ async function finish() {
   >
     <template #meta>
       <SyncChip />
+      <span v-if="gps === 'denied' || gps === 'unavailable'" class="gps-off" :title="t('driver.gpsOff')">
+        <PhMapPinLine :size="16" weight="bold" aria-hidden="true" /> {{ t('driver.gpsOffShort') }}
+        <span class="visually-hidden">{{ t('driver.gpsOff') }}</span>
+      </span>
     </template>
 
     <UiNotice v-if="driver.loadFailed" tone="danger">
@@ -116,8 +121,6 @@ async function finish() {
     />
 
     <template v-else-if="trip">
-      <p v-if="gps === 'denied' || gps === 'unavailable'" class="gps-off"><PhMapPinLine :size="16" aria-hidden="true" /> {{ t('driver.gpsOff') }}</p>
-
       <template v-if="driver.status === 'DONE'">
         <RoundSummary :summary="driver.summary" />
       </template>
@@ -145,9 +148,12 @@ async function finish() {
         <NextStopCard v-if="next" :stop="next" :total="driver.stops.length" :weekday="weekday" @pick="pick(next, $event)" @skip="pick(next, 'SKIPPED')" />
         <UiNotice v-else tone="success" :title="t('driver.allDone')" />
 
-        <UiCard v-if="upcoming.length" :title="t('driver.upNext')" padding="none">
+        <UiCard v-if="upcoming.length" :title="`${t('driver.upNext')} · ${upcoming.length}`" padding="none">
+          <template v-if="upcoming.length > 4" #actions>
+            <UiButton variant="ghost" size="sm" @click="showUpcoming = !showUpcoming">{{ showUpcoming ? t('common.close') : t('common.viewAll') }}</UiButton>
+          </template>
           <ol class="list">
-            <StopRow v-for="s in upcoming" :key="s.id" :stop="s" :weekday="weekday" />
+            <StopRow v-for="s in showUpcoming ? upcoming : upcoming.slice(0, 4)" :key="s.id" :stop="s" :weekday="weekday" />
           </ol>
         </UiCard>
 
@@ -186,15 +192,17 @@ async function finish() {
 
 <style scoped>
 .gps-off {
-  display: flex;
+  display: inline-flex;
   align-items: center;
-  gap: 8px;
-  padding: 10px 14px;
-  border-radius: var(--radius);
-  background: var(--surface);
-  border: 1px solid var(--border);
+  gap: 6px;
+  min-height: 32px;
+  padding: 0 12px;
+  border-radius: var(--radius-pill);
+  background: rgb(255 255 255 / 0.1);
+  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.16);
+  color: var(--text-inverse-muted);
   font-size: var(--text-sm);
-  color: var(--text-muted);
+  font-weight: 600;
 }
 .start {
   display: flex;

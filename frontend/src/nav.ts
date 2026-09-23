@@ -1,6 +1,7 @@
 import type { Component } from 'vue'
 import {
   PhChartBar,
+  PhChatCircleDots,
   PhClockCounterClockwise,
   PhGearSix,
   PhMapTrifold,
@@ -29,6 +30,7 @@ export const NAV: NavItem[] = [
   { name: 'shops', label: 'nav.shops', icon: PhStorefront, primary: true, roles: PLANNERS },
   { name: 'routes', label: 'nav.routes', icon: PhPath, primary: true, roles: PLANNERS },
   { name: 'reports', label: 'nav.reports', icon: PhChartBar, roles: PLANNERS },
+  { name: 'messages', label: 'nav.messages', icon: PhChatCircleDots, roles: PLANNERS },
   { name: 'driver', label: 'nav.driverToday', icon: PhSteeringWheel, primary: true, roles: ['DRIVER'] },
   { name: 'driver-trips', label: 'nav.driverTrips', icon: PhClockCounterClockwise, primary: true, roles: ['DRIVER'] },
   { name: 'settings', label: 'nav.settings', icon: PhGearSix },

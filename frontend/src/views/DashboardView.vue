@@ -11,6 +11,7 @@ import TripCard from '@/components/dashboard/TripCard.vue'
 import OpenMapCard from '@/components/dashboard/OpenMapCard.vue'
 import ClosedRateCard from '@/components/dashboard/ClosedRateCard.vue'
 import ProblemShopsCard from '@/components/dashboard/ProblemShopsCard.vue'
+import HoursToFixCard from '@/components/dashboard/HoursToFixCard.vue'
 import { api } from '@/lib/api'
 import { formatDate } from '@/lib/format'
 import { weekdayName } from '@/lib/hours'
@@ -71,7 +72,10 @@ onMounted(load)
       </section>
 
       <div class="board">
-        <OpenMapCard class="board__map" />
+        <div class="board__main">
+          <OpenMapCard />
+          <HoursToFixCard :data="data.hoursToFix" />
+        </div>
         <div class="board__side">
           <ClosedRateCard :rates="data.closedRate" :daily="data.daily" />
           <ProblemShopsCard :shops="data.problemShops" />
@@ -84,7 +88,7 @@ onMounted(load)
         <UiSkeleton v-for="i in 3" :key="i" card :lines="5" />
       </div>
       <div class="board">
-        <UiSkeleton card :lines="10" class="board__map" />
+        <UiSkeleton card :lines="10" />
         <UiSkeleton card :lines="8" />
       </div>
     </template>
@@ -103,10 +107,12 @@ onMounted(load)
   gap: 20px;
   align-items: start;
 }
+.board__main,
 .board__side {
   display: flex;
   flex-direction: column;
   gap: 20px;
+  min-width: 0;
 }
 @media (max-width: 1060px) {
   .board {

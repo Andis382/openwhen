@@ -2,8 +2,8 @@
 import { useI18n } from 'vue-i18n'
 import { PhCopy, PhMinusCircle, PhPlusCircle } from '@phosphor-icons/vue'
 import UiButton from '@/components/ui/UiButton.vue'
-import UiInput from '@/components/ui/UiInput.vue'
 import UiSegmented from '@/components/ui/UiSegmented.vue'
+import TimeSelect from './TimeSelect.vue'
 import { weekdayName } from '@/lib/hours'
 import type { DeclaredHours } from '@/types'
 
@@ -76,18 +76,14 @@ function copyMonday() {
       />
       <div v-if="modeOf(day) === 'open'" class="hours-row__times">
         <span v-for="(interval, i) in model[String(day)] ?? []" :key="i" class="hours-row__interval">
-          <UiInput
+          <TimeSelect
             :model-value="interval[0]"
-            type="time"
-            step="900"
             :aria-label="`${weekdayName(day, locale)} · ${t('hoursEditor.from')}`"
             @update:model-value="setTime(day, i, 0, $event)"
           />
           <span class="hours-row__dash" aria-hidden="true">–</span>
-          <UiInput
+          <TimeSelect
             :model-value="interval[1]"
-            type="time"
-            step="900"
             :aria-label="`${weekdayName(day, locale)} · ${t('hoursEditor.to')}`"
             @update:model-value="setTime(day, i, 1, $event)"
           />
@@ -141,9 +137,6 @@ function copyMonday() {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-}
-.hours-row__interval :deep(.control) {
-  width: 118px;
 }
 .hours-row__dash {
   color: var(--text-subtle);

@@ -14,6 +14,7 @@ import {
   PhPencilSimple,
   PhPhone,
   PhScales,
+  PhWhatsappLogo,
   PhXCircle,
 } from '@phosphor-icons/vue'
 import AppPage from '@/components/layout/AppPage.vue'
@@ -33,10 +34,12 @@ import { formatDate, formatMoney, formatPhone, formatTime } from '@/lib/format'
 import { directionsLink, formatDistance } from '@/lib/geo'
 import { weekdayName } from '@/lib/hours'
 import { telLink } from '@/lib/whatsapp'
+import { useToasts } from '@/stores/toasts'
 import type { Observation, Outcome, Page, ShopDetail, Visit } from '@/types'
 
 const { t, locale } = useI18n()
 const route = useRoute()
+const toasts = useToasts()
 const data = ref<ShopDetail | null>(null)
 const notFound = ref(false)
 const failed = ref(false)
@@ -95,6 +98,20 @@ async function moreObservations(page = (observationsPage.value?.page ?? 0) + 1) 
     observationsPage.value = result.meta
   } finally {
     loadingMore.value = null
+  }
+}
+
+const asking = ref(false)
+
+async function askHours() {
+  asking.value = true
+  try {
+    await api.post(`/shops/${id.value}/ask-hours`)
+    toasts.success(t('shop.askedTitle'), t('shop.askedText'))
+  } catch (e) {
+    toasts.error(e instanceof ApiError ? e.message : t('errors.generic'))
+  } finally {
+    asking.value = false
   }
 }
 
@@ -173,6 +190,9 @@ const details = computed(() => {
       </div>
 
       <UiCard :title="t('shop.compare')" :icon="PhScales" padding="none">
+        <template v-if="data.shop.phone" #actions>
+          <UiButton variant="soft" size="sm" :icon="PhWhatsappLogo" :loading="asking" @click="askHours">{{ t('shop.askHours') }}</UiButton>
+        </template>
         <HoursCompare :days="data.comparison" />
       </UiCard>
 

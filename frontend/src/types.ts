@@ -243,6 +243,10 @@ export type Dashboard = {
   closedRate: { week: Rate; previousWeek: Rate; month: Rate; previousMonth: Rate }
   daily: (Rate & { date: string })[]
   problemShops: (Rate & { id: number; name: string; town: string; rule: HoursRule | null })[]
+  hoursToFix: {
+    total: number
+    shops: { id: number; name: string; town: string; days: number; weekday: number; conflict: DayComparison['conflicts'][number] }[]
+  }
 }
 
 export type MapShop = {

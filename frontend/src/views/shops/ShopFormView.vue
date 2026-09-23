@@ -113,7 +113,7 @@ const labels = computed(() => ({
       <UiFormErrors :errors="form.errors.value" :message="form.message.value" :trigger="form.submitted.value" :labels="labels" />
 
       <div class="columns">
-        <UiCard :title="t('shopForm.newTitle')" :icon="PhStorefront">
+        <UiCard :title="t('shop.details')" :icon="PhStorefront">
           <div class="stack">
             <UiField id="f-name" :label="t('shopForm.name')" :error="form.error('name')" required>
               <template #default="{ id: fid, describedby, invalid }">

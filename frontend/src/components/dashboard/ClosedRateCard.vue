@@ -2,8 +2,8 @@
 import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { PhArrowDownRight, PhArrowUpRight, PhStorefront } from '@phosphor-icons/vue'
-import UiBarChart from '@/components/ui/UiBarChart.vue'
 import UiCard from '@/components/ui/UiCard.vue'
+import DailyClosedChart from './DailyClosedChart.vue'
 import { formatPercent } from '@/lib/format'
 import type { Dashboard, Rate } from '@/types'
 
@@ -24,12 +24,6 @@ function trend(period: Period): { text: string; better: boolean | null } {
   return { text: t(now < before ? period.down : period.up, { rate: formatPercent(before, 1) }), better: now < before }
 }
 
-const rows = computed(() =>
-  props.daily.map((d) => ({
-    label: String(Number(d.date.slice(8, 10))),
-    values: { closed: d.rate === null ? 0 : d.rate * 100 },
-  })),
-)
 </script>
 
 <template>
@@ -46,13 +40,8 @@ const rows = computed(() =>
         <span class="rate__visits num">{{ t('common.visits', p.current.visits) }}</span>
       </div>
     </div>
-    <UiBarChart
-      :title="t('dashboard.perDay')"
-      :series="[{ key: 'closed', label: t('dashboard.closedPct'), color: 'var(--shut)' }]"
-      :rows="rows"
-      :height="130"
-      :format="(n: number) => `${Math.round(n)}%`"
-    />
+    <p class="eyebrow chart-title">{{ t('dashboard.perDay') }}</p>
+    <DailyClosedChart :days="daily" />
   </UiCard>
 </template>
 
@@ -103,5 +92,8 @@ const rows = computed(() =>
 .rate__visits {
   font-size: var(--text-xs);
   color: var(--text-subtle);
+}
+.chart-title {
+  margin-bottom: 12px;
 }
 </style>

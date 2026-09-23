@@ -14,13 +14,13 @@ export default defineConfig({
     vue(),
     VitePWA({
       registerType: 'autoUpdate',
-      includeAssets: ['favicon.svg'],
+      includeAssets: ['favicon.svg', 'favicon.ico', 'apple-touch-icon-180x180.png'],
       manifest: {
         name: 'OpenWhen',
         short_name: 'OpenWhen',
-        description: 'OpenWhen',
-        theme_color: '#0f3b45',
-        background_color: '#f5f7f8',
+        description: 'The driver app for distributors that learns when every shop is really open.',
+        theme_color: '#0b1530',
+        background_color: '#f4f6fa',
         display: 'standalone',
         start_url: '/',
         icons: [

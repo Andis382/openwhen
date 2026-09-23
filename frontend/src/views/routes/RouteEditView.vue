@@ -16,9 +16,11 @@ import UiSelect from '@/components/ui/UiSelect.vue'
 import UiSkeleton from '@/components/ui/UiSkeleton.vue'
 import UiSwitch from '@/components/ui/UiSwitch.vue'
 import ShopMap, { type RoutePin } from '@/components/map/ShopMap.vue'
+import TimeSelect from '@/components/hours/TimeSelect.vue'
 import { api } from '@/lib/api'
 import { useForm } from '@/lib/form'
 import { weekdayName } from '@/lib/hours'
+import { useAuth } from '@/stores/auth'
 import { useConfirm } from '@/stores/confirm'
 import { useToasts } from '@/stores/toasts'
 import type { Person, RouteDetail, ShopRow } from '@/types'
@@ -29,6 +31,7 @@ const { t, locale } = useI18n()
 const route = useRoute()
 const router = useRouter()
 const toasts = useToasts()
+const auth = useAuth()
 const confirm = useConfirm()
 
 const id = computed(() => (route.params.id ? Number(route.params.id) : null))
@@ -151,7 +154,7 @@ async function destroy() {
           </UiField>
           <UiField id="f-startTime" :label="t('routes.startTime')" :error="form.error('startTime')" required>
             <template #default="{ id: fid, describedby, invalid }">
-              <UiInput :id="fid" v-model="form.data.startTime" type="time" step="300" :invalid="invalid" :describedby="describedby" />
+              <TimeSelect :id="fid" v-model="form.data.startTime" from="04:00" to="20:00" :aria-invalid="invalid ? 'true' : undefined" :aria-describedby="describedby" />
             </template>
           </UiField>
           <div class="field-like">
@@ -196,7 +199,7 @@ async function destroy() {
 
         <div class="side">
           <UiCard v-if="stops.length" :title="t('trip.route')" :icon="PhMapPin" padding="sm">
-            <ShopMap :route="pins" :label="t('trip.route')" :height="260" />
+            <ShopMap :route="pins" :depot="auth.organization?.depot ?? null" :depot-label="t('dashboard.mapDepot')" :label="t('trip.route')" :height="260" />
           </UiCard>
           <UiCard :title="t('routes.addShops')" :icon="PhPlus" padding="none">
             <div class="add-search"><UiSearch v-model="search" :placeholder="t('routes.addSearch')" /></div>

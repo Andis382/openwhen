@@ -1,0 +1,9 @@
+{
+  "email": "driver1@openwhen.test",
+  "password": "demo1234",
+  "pages": [
+    { "name": "driver-round", "path": "/driver", "wait": 1500 },
+    { "name": "driver-round-list", "path": "/driver", "wait": 1500, "scroll": 1150, "mobileOnly": true },
+    { "name": "driver-trips", "path": "/driver/trips", "wait": 1200, "mobileOnly": true }
+  ]
+}

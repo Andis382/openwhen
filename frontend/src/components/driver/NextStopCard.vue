@@ -3,6 +3,7 @@ import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { PhChatCircleText, PhCoins, PhNavigationArrow, PhNotePencil, PhPhone, PhSkipForward, PhUser } from '@phosphor-icons/vue'
 import UiButton from '@/components/ui/UiButton.vue'
+import UiIconButton from '@/components/ui/UiIconButton.vue'
 import OpenBadge from '@/components/hours/OpenBadge.vue'
 import RuleList from '@/components/hours/RuleList.vue'
 import OutcomeButtons from './OutcomeButtons.vue'
@@ -59,11 +60,20 @@ const warning = computed(() => {
     </div>
 
     <div class="next__actions">
-      <UiButton :icon="PhNavigationArrow" size="lg" :href="directionsLink(stop.shop.lat, stop.shop.lng)" target="_blank">{{ t('driver.navigate') }}</UiButton>
-      <UiButton v-if="stop.shop.phone" variant="secondary" size="lg" :icon="PhPhone" :href="telLink(stop.shop.phone) ?? undefined">{{ t('common.call') }}</UiButton>
-      <UiButton v-if="stop.shop.phone" variant="secondary" size="lg" :icon="PhChatCircleText" :href="waLink(stop.shop.phone) ?? undefined" target="_blank">
-        {{ t('common.whatsapp') }}
+      <UiButton :icon="PhNavigationArrow" size="lg" class="next__navigate" :href="directionsLink(stop.shop.lat, stop.shop.lng)" target="_blank">
+        {{ t('driver.navigate') }}
       </UiButton>
+      <template v-if="stop.shop.phone">
+        <UiIconButton :icon="PhPhone" variant="secondary" class="next__contact" :label="`${t('common.call')} ${stop.shop.name}`" :href="telLink(stop.shop.phone) ?? undefined" />
+        <UiIconButton
+          :icon="PhChatCircleText"
+          variant="secondary"
+          class="next__contact"
+          :label="`${t('common.whatsapp')} ${stop.shop.name}`"
+          :href="waLink(stop.shop.phone) ?? undefined"
+          target="_blank"
+        />
+      </template>
     </div>
 
     <div class="next__outcomes">
@@ -164,20 +174,17 @@ const warning = computed(() => {
   font-size: 1.15rem;
 }
 .next__actions {
-  display: grid;
-  grid-template-columns: 1.4fr 1fr 1fr;
+  display: flex;
   gap: 8px;
 }
-.next__actions :deep(.btn) {
-  width: 100%;
+.next__navigate {
+  flex: 1;
 }
-@media (max-width: 420px) {
-  .next__actions {
-    grid-template-columns: 1fr 1fr;
-  }
-  .next__actions :deep(.btn:first-child) {
-    grid-column: 1 / -1;
-  }
+.next__actions .next__contact {
+  width: 54px;
+  height: 54px;
+  border-radius: var(--radius);
+  color: var(--primary);
 }
 .next__outcomes {
   display: flex;

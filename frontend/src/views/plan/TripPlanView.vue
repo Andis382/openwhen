@@ -29,6 +29,7 @@ import UiNotice from '@/components/ui/UiNotice.vue'
 import UiSelect from '@/components/ui/UiSelect.vue'
 import UiSkeleton from '@/components/ui/UiSkeleton.vue'
 import RuleList from '@/components/hours/RuleList.vue'
+import TimeSelect from '@/components/hours/TimeSelect.vue'
 import ShopMap, { type RoutePin } from '@/components/map/ShopMap.vue'
 import { api, ApiError } from '@/lib/api'
 import { formatDate, formatNumber, formatPercent } from '@/lib/format'
@@ -327,7 +328,7 @@ function meterTone(stop: PlanStop) {
               </UiField>
               <UiField id="trip-start" :label="t('trip.start')">
                 <template #default="{ id: fid }">
-                  <UiInput :id="fid" v-model="startTime" type="time" step="300" />
+                  <TimeSelect :id="fid" v-model="startTime" from="04:00" to="20:00" />
                 </template>
               </UiField>
               <div class="settings__actions">
