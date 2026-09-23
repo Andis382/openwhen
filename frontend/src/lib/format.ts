@@ -1,4 +1,16 @@
 /** Locale-aware formatting. Albanian uses "sq-AL" conventions (day first, comma decimals). */
+import {
+  MONTHS,
+  WEEKDAYS,
+  WEEKDAYS_SHORT,
+  albanianCurrency,
+  albanianDate,
+  albanianDateTime,
+  albanianNumber,
+  albanianRelative,
+  dateParts,
+  intlHasAlbanian,
+} from './albanian'
 
 let locale = 'en'
 let currency = 'EUR'
@@ -27,9 +39,15 @@ function toDate(value: string | number | Date): Date {
   return new Date(value)
 }
 
+/** Albanian chosen but the browser's Intl has no Albanian: format from our own tables. */
+export function albanianByHand() {
+  return locale === 'sq' && !intlHasAlbanian
+}
+
 export function formatDate(value: string | number | Date | null | undefined, style: 'short' | 'medium' | 'long' = 'medium') {
   if (value === null || value === undefined || value === '') return '—'
   const d = toDate(value)
+  if (albanianByHand()) return albanianDate(dateParts(d, isPlainDate(value) ? undefined : timeZone), style)
   const options: Intl.DateTimeFormatOptions =
     style === 'short'
       ? { day: 'numeric', month: 'short' }
@@ -41,6 +59,7 @@ export function formatDate(value: string | number | Date | null | undefined, sty
 
 export function formatDateTime(value: string | number | Date | null | undefined) {
   if (value === null || value === undefined || value === '') return '—'
+  if (albanianByHand()) return albanianDateTime(dateParts(toDate(value), timeZone))
   return new Intl.DateTimeFormat(tag(), {
     day: 'numeric',
     month: 'short',
@@ -57,10 +76,18 @@ export function formatTime(value: string | number | Date | null | undefined) {
 }
 
 export function formatWeekday(value: string | Date, style: 'short' | 'long' = 'long') {
+  if (albanianByHand()) {
+    const { weekday } = dateParts(toDate(value))
+    return (style === 'short' ? WEEKDAYS_SHORT : WEEKDAYS)[weekday] ?? ''
+  }
   return new Intl.DateTimeFormat(tag(), { weekday: style }).format(toDate(value))
 }
 
 export function formatMonth(value: string | Date) {
+  if (albanianByHand()) {
+    const { month, year } = dateParts(toDate(value))
+    return `${MONTHS[month]} ${year}`
+  }
   return new Intl.DateTimeFormat(tag(), { month: 'long', year: 'numeric' }).format(toDate(value))
 }
 
@@ -71,34 +98,37 @@ export function formatRelative(value: string | number | Date | null | undefined,
   const diffSeconds = Math.round((d.getTime() - now.getTime()) / 1000)
   const abs = Math.abs(diffSeconds)
   const rtf = new Intl.RelativeTimeFormat(tag(), { numeric: 'auto' })
-  if (abs < 60) return rtf.format(diffSeconds, 'second')
-  if (abs < 3600) return rtf.format(Math.round(diffSeconds / 60), 'minute')
-  if (abs < 86400) return rtf.format(Math.round(diffSeconds / 3600), 'hour')
-  if (abs < 86400 * 7) return rtf.format(Math.round(diffSeconds / 86400), 'day')
-  if (abs < 86400 * 45) return rtf.format(Math.round(diffSeconds / (86400 * 7)), 'week')
-  if (abs < 86400 * 365) return rtf.format(Math.round(diffSeconds / (86400 * 30)), 'month')
-  return rtf.format(Math.round(diffSeconds / (86400 * 365)), 'year')
+  const say = (amount: number, unit: Intl.RelativeTimeFormatUnit) => (albanianByHand() ? albanianRelative(amount, unit) : rtf.format(amount, unit))
+  if (abs < 60) return say(diffSeconds, 'second')
+  if (abs < 3600) return say(Math.round(diffSeconds / 60), 'minute')
+  if (abs < 86400) return say(Math.round(diffSeconds / 3600), 'hour')
+  if (abs < 86400 * 7) return say(Math.round(diffSeconds / 86400), 'day')
+  if (abs < 86400 * 45) return say(Math.round(diffSeconds / (86400 * 7)), 'week')
+  if (abs < 86400 * 365) return say(Math.round(diffSeconds / (86400 * 30)), 'month')
+  return say(Math.round(diffSeconds / (86400 * 365)), 'year')
 }
 
 /** Money is always carried as integer cents. */
 export function formatMoney(cents: number | null | undefined, options: { currency?: string; decimals?: boolean } = {}) {
   if (cents === null || cents === undefined) return '—'
   const decimals = options.decimals ?? cents % 100 !== 0
-  return new Intl.NumberFormat(tag(), {
-    style: 'currency',
-    currency: options.currency ?? currency,
-    minimumFractionDigits: decimals ? 2 : 0,
-    maximumFractionDigits: decimals ? 2 : 0,
-  }).format(cents / 100)
+  const digits = { minimumFractionDigits: decimals ? 2 : 0, maximumFractionDigits: decimals ? 2 : 0 }
+  if (albanianByHand()) {
+    const amount = albanianNumber(new Intl.NumberFormat('en-GB', digits).format(cents / 100))
+    return `${amount} ${albanianCurrency(options.currency ?? currency)}`
+  }
+  return new Intl.NumberFormat(tag(), { style: 'currency', currency: options.currency ?? currency, ...digits }).format(cents / 100)
 }
 
 export function formatNumber(value: number | null | undefined, maximumFractionDigits = 1) {
   if (value === null || value === undefined || Number.isNaN(value)) return '—'
+  if (albanianByHand()) return albanianNumber(new Intl.NumberFormat('en-GB', { maximumFractionDigits }).format(value))
   return new Intl.NumberFormat(tag(), { maximumFractionDigits }).format(value)
 }
 
 export function formatPercent(value: number | null | undefined, maximumFractionDigits = 0) {
   if (value === null || value === undefined || Number.isNaN(value)) return '—'
+  if (albanianByHand()) return albanianNumber(new Intl.NumberFormat('en-GB', { style: 'percent', maximumFractionDigits }).format(value))
   return new Intl.NumberFormat(tag(), { style: 'percent', maximumFractionDigits }).format(value)
 }
 

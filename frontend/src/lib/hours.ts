@@ -1,4 +1,5 @@
 import type { ArrivalWarning, HoursRule, OpenState, OpenStateName } from '@/types'
+import { WEEKDAYS, WEEKDAYS_SHORT, albanianList, intlHasAlbanian } from './albanian'
 
 /** The modelled day, as on the server: thirty half-hour slots from 06:00 to 21:00. */
 export const FIRST_MINUTE = 360
@@ -33,6 +34,7 @@ export function slotStart(slot: number): string {
 
 /** ISO weekday (1 = Monday) as a word: "Monday", "E hënë". */
 export function weekdayName(weekday: number, locale: string, style: 'long' | 'short' = 'long'): string {
+  if (locale === 'sq' && !intlHasAlbanian) return capitalize((style === 'short' ? WEEKDAYS_SHORT : WEEKDAYS)[weekday % 7] ?? '')
   // 1 January 2024 was a Monday.
   const date = new Date(Date.UTC(2024, 0, weekday, 12))
   return capitalize(new Intl.DateTimeFormat(tag(locale), { weekday: style, timeZone: 'UTC' }).format(date))
@@ -54,7 +56,8 @@ function lowerFirst(text: string) {
  */
 export function dayGroup(weekdays: number[], t: Translate, locale: string): string {
   const days = [...new Set(weekdays)].sort((a, b) => a - b)
-  const list = (items: string[]) => new Intl.ListFormat(tag(locale), { style: 'long', type: 'conjunction' }).format(items)
+  const list = (items: string[]) =>
+    locale === 'sq' && !intlHasAlbanian ? albanianList(items) : new Intl.ListFormat(tag(locale), { style: 'long', type: 'conjunction' }).format(items)
   if (days.length === 7) return t('days.everyDay')
   if (days.join() === '1,2,3,4,5') return t('days.weekdays')
   const first = days[0] ?? 1
