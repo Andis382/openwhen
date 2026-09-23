@@ -64,7 +64,7 @@ export type DayComparison = {
   declared: [string, string][] | null
   observed: [string, string][]
   status: 'match' | 'mismatch' | 'undeclared' | 'too_few'
-  conflicts: { from: string; to: string; declaredOpen: boolean; open: number; total: number }[]
+  conflicts: { from: string; to: string; declaredOpen: boolean; open: number; total: number; days: number[] }[]
   visits: number
 }
 
@@ -245,7 +245,7 @@ export type Dashboard = {
   problemShops: (Rate & { id: number; name: string; town: string; rule: HoursRule | null })[]
   hoursToFix: {
     total: number
-    shops: { id: number; name: string; town: string; days: number; weekday: number; conflict: DayComparison['conflicts'][number] }[]
+    shops: { id: number; name: string; town: string; days: number; conflict: DayComparison['conflicts'][number] }[]
   }
 }
 

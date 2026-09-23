@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, nextTick, onMounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { useRouter } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { PhCheckCircle, PhClockCounterClockwise, PhMapPinArea, PhQuestion, PhXCircle } from '@phosphor-icons/vue'
 import UiButton from '@/components/ui/UiButton.vue'
 import UiCard from '@/components/ui/UiCard.vue'
@@ -16,6 +16,7 @@ import type { MapData } from '@/types'
 /** Every active shop coloured by its chance of being open at a chosen moment (now by default). */
 const { t, locale } = useI18n()
 const router = useRouter()
+const route = useRoute()
 
 const data = ref<MapData | null>(null)
 const failed = ref(false)
@@ -75,7 +76,16 @@ const counts = computed(() => {
   }
 })
 
-onMounted(() => load())
+onMounted(() => {
+  // A link can open the map at a set moment: /?map=4-09:30 is Thursday half past nine.
+  const match = typeof route.query.map === 'string' ? /^([1-7])-(\d{2}:[03]0)$/.exec(route.query.map) : null
+  if (match) {
+    chosen.value = true
+    load({ weekday: Number(match[1]), time: match[2]! })
+  } else {
+    load()
+  }
+})
 </script>
 
 <template>

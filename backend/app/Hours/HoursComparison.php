@@ -26,7 +26,7 @@ final class HoursComparison
     /**
      * @param  iterable<Sighting>  $sightings
      * @param  list<HoursRule>  $rules  as extracted from the same model and sightings
-     * @return list<array{weekday: int, declared: list<array{0: string, 1: string}>|null, observed: list<array{0: string, 1: string}>, status: string, conflicts: list<array{from: string, to: string, declaredOpen: bool, open: int, total: int}>, visits: int}>
+     * @return list<array{weekday: int, declared: list<array{0: string, 1: string}>|null, observed: list<array{0: string, 1: string}>, status: string, conflicts: list<array{from: string, to: string, declaredOpen: bool, open: int, total: int, days: list<int>}>, visits: int}>
      */
     public function compare(OpeningHoursModel $model, iterable $sightings, array $rules): array
     {
@@ -41,7 +41,7 @@ final class HoursComparison
         $days = [];
         for ($day = 1; $day <= 7; $day++) {
             $conflicts = array_merge(
-                $this->shutWhileDeclaredOpen($declared, $day, $rules, $byDay[$day]),
+                $this->shutWhileDeclaredOpen($declared, $day, $rules),
                 $this->openWhileDeclaredShut($declared, $day, $byDay[$day]),
             );
             usort($conflicts, fn (array $a, array $b) => $a['from'] <=> $b['from']);
@@ -68,9 +68,8 @@ final class HoursComparison
      * Learned closed windows that overlap the declared opening hours.
      *
      * @param  list<HoursRule>  $rules
-     * @param  list<Sighting>  $sightings
      */
-    private function shutWhileDeclaredOpen(DeclaredHours $declared, int $day, array $rules, array $sightings): array
+    private function shutWhileDeclaredOpen(DeclaredHours $declared, int $day, array $rules): array
     {
         $conflicts = [];
         foreach ($rules as $rule) {
@@ -87,7 +86,8 @@ final class HoursComparison
                 $from = max($open, $shutFrom);
                 $to = min($close, $shutTo);
                 if ($from < $to) {
-                    $conflicts[] = ['from' => $from, 'to' => $to, 'declaredOpen' => true] + $this->evidence($sightings, $from, $to);
+                    // The rule's own evidence, gathered over all the days it covers.
+                    $conflicts[] = ['from' => $from, 'to' => $to, 'declaredOpen' => true, 'open' => $rule->open, 'total' => $rule->total, 'days' => $rule->weekdays];
                 }
             }
         }
@@ -122,7 +122,7 @@ final class HoursComparison
         foreach ($gaps as [$from, $to]) {
             $evidence = $this->evidence($sightings, $from, $to);
             if ($from < $to && $evidence['total'] >= self::MIN_SIGHTINGS && $evidence['open'] >= self::MIN_OPEN_SHARE * $evidence['total']) {
-                $conflicts[] = ['from' => $from, 'to' => $to, 'declaredOpen' => false] + $evidence;
+                $conflicts[] = ['from' => $from, 'to' => $to, 'declaredOpen' => false] + $evidence + ['days' => [$day]];
             }
         }
 

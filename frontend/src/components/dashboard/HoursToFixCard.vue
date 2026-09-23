@@ -3,7 +3,7 @@ import { useI18n } from 'vue-i18n'
 import { PhCaretRight, PhClockUser } from '@phosphor-icons/vue'
 import UiCard from '@/components/ui/UiCard.vue'
 import UiEmpty from '@/components/ui/UiEmpty.vue'
-import { weekdayName } from '@/lib/hours'
+import { dayGroupInline } from '@/lib/hours'
 import type { Dashboard } from '@/types'
 
 /** Shops whose declared hours the visits contradict: worth a phone call, or a new sign on the door. */
@@ -21,13 +21,13 @@ const { t, locale } = useI18n()
           <span class="fix__body">
             <span class="fix__name">{{ shop.name }} <span class="fix__town">· {{ shop.town }}</span></span>
             <span class="fix__conflict">
-              {{ weekdayName(shop.weekday, locale) }}:
               {{
                 t(shop.conflict.declaredOpen ? 'shop.conflictOpen' : 'shop.conflictShut', {
                   from: shop.conflict.from,
                   to: shop.conflict.to,
                   open: shop.conflict.open,
                   total: shop.conflict.total,
+                  days: dayGroupInline(shop.conflict.days, t, locale),
                 })
               }}
             </span>

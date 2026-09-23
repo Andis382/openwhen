@@ -29,7 +29,7 @@ class HoursComparisonTest extends TestCase
         $monday = $this->compare($this->everyDay('07:00', '20:00'), $sightings)[0];
 
         $this->assertSame('mismatch', $monday['status']);
-        $this->assertSame([['from' => '07:00', 'to' => '10:00', 'declaredOpen' => true, 'open' => 0, 'total' => 5]], $monday['conflicts']);
+        $this->assertSame([['from' => '07:00', 'to' => '10:00', 'declaredOpen' => true, 'open' => 0, 'total' => 5, 'days' => [1]]], $monday['conflicts']);
         $this->assertSame('10:00', $monday['observed'][0][0]);
         $this->assertSame(9, $monday['visits']);
     }
@@ -41,7 +41,7 @@ class HoursComparisonTest extends TestCase
         $sunday = $this->compare($declared, $this->sawOn([7], ['09:10', '09:40', '10:10'], true))[6];
 
         $this->assertSame('mismatch', $sunday['status']);
-        $this->assertSame([['from' => '06:00', 'to' => '21:00', 'declaredOpen' => false, 'open' => 3, 'total' => 3]], $sunday['conflicts']);
+        $this->assertSame([['from' => '06:00', 'to' => '21:00', 'declaredOpen' => false, 'open' => 3, 'total' => 3, 'days' => [7]]], $sunday['conflicts']);
     }
 
     public function test_agreeing_visits_match(): void

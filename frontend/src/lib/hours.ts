@@ -80,6 +80,12 @@ export function dayGroup(weekdays: number[], t: Translate, locale: string): stri
   )
 }
 
+/** The same, inside a sentence: Albanian drops the capital ("… (të hënave) …"). */
+export function dayGroupInline(weekdays: number[], t: Translate, locale: string): string {
+  const group = dayGroup(weekdays, t, locale)
+  return locale === 'sq' ? lowerFirst(group) : group
+}
+
 /** "Mondays: never open before 10:00" */
 export function ruleSentence(rule: HoursRule, t: Translate, locale: string): string {
   const days = dayGroup(rule.weekdays, t, locale)

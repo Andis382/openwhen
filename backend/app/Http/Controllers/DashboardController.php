@@ -70,7 +70,6 @@ class DashboardController extends Controller
                     'name' => $shop->name,
                     'town' => $shop->town,
                     'days' => count($days),
-                    'weekday' => $days[0]['weekday'],
                     'conflict' => $days[0]['conflicts'][0],
                 ];
             }

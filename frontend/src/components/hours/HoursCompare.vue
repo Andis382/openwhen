@@ -2,7 +2,7 @@
 import { useI18n } from 'vue-i18n'
 import { PhCheck, PhHourglassSimple, PhQuestion, PhWarning } from '@phosphor-icons/vue'
 import UiBadge from '@/components/ui/UiBadge.vue'
-import { weekdayName } from '@/lib/hours'
+import { dayGroupInline, weekdayName } from '@/lib/hours'
 import type { DayComparison } from '@/types'
 
 defineProps<{ days: DayComparison[] }>()
@@ -38,7 +38,15 @@ function intervals(list: [string, string][] | null): string {
           <td>
             <UiBadge :tone="TONES[day.status]" :icon="ICONS[day.status]" size="sm">{{ t(`shop.status.${day.status}`) }}</UiBadge>
             <p v-for="(c, i) in day.conflicts" :key="i" class="compare__conflict">
-              {{ t(c.declaredOpen ? 'shop.conflictOpen' : 'shop.conflictShut', { from: c.from, to: c.to, open: c.open, total: c.total }) }}
+              {{
+                t(c.declaredOpen ? 'shop.conflictOpen' : 'shop.conflictShut', {
+                  from: c.from,
+                  to: c.to,
+                  open: c.open,
+                  total: c.total,
+                  days: dayGroupInline(c.days, t, locale),
+                })
+              }}
             </p>
           </td>
         </tr>
