@@ -83,10 +83,10 @@ export function dayGroup(weekdays: number[], t: Translate, locale: string): stri
   )
 }
 
-/** The same, inside a sentence: Albanian drops the capital ("… (të hënave) …"). */
+/** The same, inside a sentence: Albanian phrases drop their capital ("… (të hënave) …"); abbreviations keep it. */
 export function dayGroupInline(weekdays: number[], t: Translate, locale: string): string {
   const group = dayGroup(weekdays, t, locale)
-  return locale === 'sq' ? lowerFirst(group) : group
+  return locale === 'sq' && /^(Të|E|Ditëve|Çdo)\s/.test(group) ? lowerFirst(group) : group
 }
 
 /** "Mondays: never open before 10:00" */

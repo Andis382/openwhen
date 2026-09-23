@@ -202,7 +202,7 @@ const sq: MessageSchema = {
     noTripsText: 'Krijoni xhirot e sotme nga linjat te plani.',
     openPlan: 'Hap planin',
     tomorrowTitle: 'Xhirot e nesërme nuk janë gati',
-    tomorrowText: '{trips} xhiro për {day}: {unpublished} të pa publikuara, {notOptimised} ende pa optimizuar.',
+    tomorrowText: '{trips} xhiro nesër, {day}: {unpublished} të pa publikuara, {notOptimised} ende pa optimizuar.',
     progress: '{done} nga {total} ndalesa',
     delivered: 'Dorëzuar',
     closed: 'Mbyllur',

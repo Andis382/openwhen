@@ -13,17 +13,16 @@ import ClosedRateCard from '@/components/dashboard/ClosedRateCard.vue'
 import ProblemShopsCard from '@/components/dashboard/ProblemShopsCard.vue'
 import HoursToFixCard from '@/components/dashboard/HoursToFixCard.vue'
 import { api } from '@/lib/api'
-import { formatDate } from '@/lib/format'
-import { weekdayName } from '@/lib/hours'
+import { formatDate, formatWeekday } from '@/lib/format'
 import { useAuth } from '@/stores/auth'
 import type { Dashboard } from '@/types'
 
-const { t, locale } = useI18n()
+const { t } = useI18n()
 const auth = useAuth()
 const data = ref<Dashboard | null>(null)
 const failed = ref(false)
 
-const tomorrowDay = computed(() => (data.value ? weekdayName(new Date(data.value.tomorrow.date + 'T12:00:00').getDay() || 7, locale.value) : ''))
+const tomorrowDay = computed(() => (data.value ? formatWeekday(data.value.tomorrow.date) : ''))
 
 async function load() {
   failed.value = false
