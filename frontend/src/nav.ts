@@ -1,5 +1,14 @@
 import type { Component } from 'vue'
-import { PhChatCircleDots, PhGearSix, PhHouse } from '@phosphor-icons/vue'
+import {
+  PhChartBar,
+  PhClockCounterClockwise,
+  PhGearSix,
+  PhMapTrifold,
+  PhPath,
+  PhSteeringWheel,
+  PhStorefront,
+  PhSunHorizon,
+} from '@phosphor-icons/vue'
 
 export type NavItem = {
   /** route name */
@@ -12,8 +21,15 @@ export type NavItem = {
   roles?: string[]
 }
 
+const PLANNERS = ['OWNER', 'DISPATCHER']
+
 export const NAV: NavItem[] = [
-  { name: 'home', label: 'nav.home', icon: PhHouse, primary: true },
-  { name: 'messages', label: 'nav.messages', icon: PhChatCircleDots, primary: true },
+  { name: 'home', label: 'nav.home', icon: PhSunHorizon, primary: true, roles: PLANNERS },
+  { name: 'plan', label: 'nav.plan', icon: PhMapTrifold, primary: true, roles: PLANNERS },
+  { name: 'shops', label: 'nav.shops', icon: PhStorefront, primary: true, roles: PLANNERS },
+  { name: 'routes', label: 'nav.routes', icon: PhPath, primary: true, roles: PLANNERS },
+  { name: 'reports', label: 'nav.reports', icon: PhChartBar, roles: PLANNERS },
+  { name: 'driver', label: 'nav.driverToday', icon: PhSteeringWheel, primary: true, roles: ['DRIVER'] },
+  { name: 'driver-trips', label: 'nav.driverTrips', icon: PhClockCounterClockwise, primary: true, roles: ['DRIVER'] },
   { name: 'settings', label: 'nav.settings', icon: PhGearSix },
 ]

@@ -1,0 +1,129 @@
+/* Leaflet puts pins and tooltips outside Vue's scoped styles, so they are styled here. */
+.ow-map {
+  position: relative;
+  z-index: 0;
+  width: 100%;
+  border-radius: var(--radius);
+  overflow: hidden;
+  background: var(--surface-sunken);
+  box-shadow: inset 0 0 0 1px var(--border);
+  font-family: var(--font-body);
+}
+.ow-map .leaflet-control-attribution {
+  font-size: 10px;
+  background: rgb(255 255 255 / 0.82);
+  border-top-left-radius: 6px;
+}
+.ow-map .leaflet-bar {
+  border: 0;
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  box-shadow: var(--shadow-md);
+}
+.ow-map .leaflet-bar a {
+  width: 34px;
+  height: 34px;
+  line-height: 34px;
+  color: var(--text);
+}
+.ow-map .leaflet-tile-pane {
+  filter: saturate(0.72) contrast(0.96) brightness(1.02);
+}
+.ow-route-line {
+  stroke: var(--primary);
+  stroke-opacity: 0.75;
+}
+.ow-pin-wrap {
+  background: none;
+  border: 0;
+}
+.ow-pin {
+  display: grid;
+  place-items: center;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  border: 2px solid var(--surface);
+  color: var(--text-inverse);
+  box-shadow:
+    0 1px 2px rgb(15 23 42 / 0.3),
+    0 4px 10px -2px rgb(15 23 42 / 0.35);
+  transition: transform var(--duration) var(--ease);
+}
+.ow-pin svg {
+  width: 14px;
+  height: 14px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2.2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.ow-pin svg circle {
+  fill: currentColor;
+  stroke: none;
+}
+.ow-pin--open {
+  background: var(--open);
+}
+.ow-pin--unsure {
+  background: var(--unsure);
+}
+.ow-pin--closed {
+  background: var(--shut);
+}
+.ow-pin.is-selected,
+.leaflet-marker-icon:hover .ow-pin,
+.leaflet-marker-icon:focus-visible .ow-pin {
+  transform: scale(1.18);
+}
+.leaflet-marker-icon:focus-visible {
+  outline: none;
+}
+.leaflet-marker-icon:focus-visible .ow-pin {
+  box-shadow: 0 0 0 4px var(--focus-ring);
+}
+.ow-pin--num {
+  background: var(--brand-600);
+  font-size: 12px;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+}
+.ow-pin--num.is-risky {
+  background: var(--unsure);
+  color: var(--gray-900);
+}
+.ow-pin--depot {
+  border-radius: 9px;
+  background: var(--header-from);
+  color: var(--accent-500);
+}
+.ow-pin--depot svg {
+  width: 16px;
+  height: 16px;
+}
+.leaflet-tooltip.ow-tooltip {
+  padding: 8px 10px;
+  border: 0;
+  border-radius: var(--radius-sm);
+  background: var(--gray-900);
+  color: var(--text-inverse);
+  box-shadow: var(--shadow-lg);
+  font-family: var(--font-body);
+}
+.leaflet-tooltip.ow-tooltip::before {
+  display: none;
+}
+.ow-tip {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  font-size: 12px;
+  line-height: 1.35;
+}
+.ow-tip strong {
+  font-size: 13px;
+}
+.ow-tip span {
+  color: rgb(255 255 255 / 0.78);
+}

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useRoute, useRouter, RouterLink } from 'vue-router'
-import { PhEnvelopeSimple, PhLockSimple, PhSparkle } from '@phosphor-icons/vue'
+import { PhEnvelopeSimple, PhLockSimple, PhSparkle, PhSteeringWheel } from '@phosphor-icons/vue'
 import AuthLayout from '@/components/layout/AuthLayout.vue'
 import UiButton from '@/components/ui/UiButton.vue'
 import UiField from '@/components/ui/UiField.vue'
@@ -26,8 +26,8 @@ async function submit() {
   }
 }
 
-function useDemo() {
-  form.data.email = DEMO.email
+function useDemo(email: string) {
+  form.data.email = email
   form.data.password = DEMO.password
   submit()
 }
@@ -82,7 +82,12 @@ function useDemo() {
           <p class="strong">{{ $t('auth.demoTitle') }}</p>
           <p class="small muted">{{ $t('auth.demoText') }}</p>
         </div>
-        <UiButton variant="soft" :icon="PhSparkle" :disabled="form.processing.value" @click="useDemo">{{ $t('auth.useDemo') }}</UiButton>
+        <div class="demo__buttons">
+          <UiButton variant="soft" :icon="PhSparkle" :disabled="form.processing.value" @click="useDemo(DEMO.email)">{{ $t('auth.useDemo') }}</UiButton>
+          <UiButton variant="ghost" :icon="PhSteeringWheel" :disabled="form.processing.value" @click="useDemo(DEMO.driverEmail)">
+            {{ $t('auth.useDriverDemo') }}
+          </UiButton>
+        </div>
       </div>
 
       <p class="small muted">
@@ -104,6 +109,12 @@ function useDemo() {
   border: 1px solid var(--border);
   border-radius: var(--radius);
   box-shadow: var(--shadow-sm), var(--highlight);
+}
+.demo__buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex: none;
 }
 @media (max-width: 480px) {
   .demo {

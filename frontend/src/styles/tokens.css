@@ -1,11 +1,13 @@
 /*
  * Design tokens. Screens use only these semantic names, never raw colours.
- * Each app re-skins itself by changing this file alone.
+ * OpenWhen: logistics at dawn. A night-blue band over a crisp working surface, cobalt for
+ * actions, amber for the first light, and open/unsure/shut signal colours that always come
+ * with an icon or a number so they read without colour vision.
  */
 :root {
   /* Typography */
-  --font-display: 'Plus Jakarta Sans Variable', ui-sans-serif, system-ui, sans-serif;
-  --font-body: 'Plus Jakarta Sans Variable', ui-sans-serif, system-ui, sans-serif;
+  --font-display: 'Outfit Variable', ui-sans-serif, system-ui, sans-serif;
+  --font-body: 'Inter Variable', ui-sans-serif, system-ui, sans-serif;
   --font-mono: 'JetBrains Mono Variable', ui-monospace, 'SFMono-Regular', monospace;
 
   --text-xs: 0.75rem;
@@ -16,49 +18,50 @@
   --text-2xl: 1.75rem;
   --text-3xl: 2.25rem;
 
-  /* Brand ramp */
-  --brand-50: #eefbf9;
-  --brand-100: #d5f4ef;
-  --brand-200: #ade8df;
-  --brand-300: #7cd4c9;
-  --brand-400: #4bb8ad;
-  --brand-500: #2a9c92;
-  --brand-600: #1f7e77;
-  --brand-700: #1c6561;
-  --brand-800: #1a514f;
-  --brand-900: #173f3e;
+  /* Brand ramp: cobalt */
+  --brand-50: #eef5ff;
+  --brand-100: #d9e8ff;
+  --brand-200: #bcd7ff;
+  --brand-300: #8ebdff;
+  --brand-400: #5a9bfb;
+  --brand-500: #3a82f6;
+  --brand-600: #1f6feb;
+  --brand-700: #1858c9;
+  --brand-800: #1a49a1;
+  --brand-900: #1b3e7f;
 
-  --accent-400: #f5a54a;
-  --accent-500: #ec8a24;
-  --accent-600: #cf6d12;
+  /* Accent: first light */
+  --accent-400: #f7b84b;
+  --accent-500: #f5a524;
+  --accent-600: #d4870a;
 
-  /* Neutrals (slightly cool) */
-  --gray-25: #fbfcfc;
-  --gray-50: #f5f7f8;
-  --gray-100: #eceff1;
-  --gray-200: #dde2e6;
-  --gray-300: #c3cad0;
-  --gray-400: #97a1aa;
-  --gray-500: #6c7781;
-  --gray-600: #525c66;
-  --gray-700: #3c444d;
-  --gray-800: #262c33;
-  --gray-900: #151a1f;
+  /* Neutrals (cool slate) */
+  --gray-25: #fbfcfe;
+  --gray-50: #f4f6fa;
+  --gray-100: #eaeef5;
+  --gray-200: #dce2ec;
+  --gray-300: #c2cbda;
+  --gray-400: #8f9bb0;
+  --gray-500: #67748a;
+  --gray-600: #4d596e;
+  --gray-700: #384357;
+  --gray-800: #232c3d;
+  --gray-900: #121a2b;
 
   /* Semantic surfaces */
   --bg: var(--gray-50);
   --surface: #ffffff;
-  --surface-muted: var(--gray-50);
+  --surface-muted: #f7f9fc;
   --surface-sunken: var(--gray-100);
-  --surface-hover: #f8fafa;
-  --border: rgb(21 26 31 / 0.08);
-  --border-strong: rgb(21 26 31 / 0.16);
+  --surface-hover: #f6f9fe;
+  --border: rgb(18 26 43 / 0.08);
+  --border-strong: rgb(18 26 43 / 0.16);
 
   --text: var(--gray-900);
   --text-muted: var(--gray-600);
   --text-subtle: var(--gray-500);
   --text-inverse: #ffffff;
-  --text-inverse-muted: rgb(255 255 255 / 0.72);
+  --text-inverse-muted: rgb(226 234 250 / 0.74);
 
   --primary: var(--brand-600);
   --primary-hover: var(--brand-700);
@@ -69,47 +72,64 @@
   --on-primary: #ffffff;
 
   --accent: var(--accent-500);
-  --accent-soft: #fff4e6;
-  --accent-soft-text: #9a4d06;
+  --accent-soft: #fff5e1;
+  --accent-soft-text: #8f5a00;
 
-  --success: #16865a;
-  --success-soft: #e8f7ef;
-  --success-text: #0f6a46;
-  --warning: #c77700;
-  --warning-soft: #fff6e0;
-  --warning-text: #8a5100;
-  --danger: #d23b3b;
-  --danger-hover: #b52f2f;
-  --danger-soft: #fdeceb;
-  --danger-text: #a52626;
-  --info: #2f6fd6;
-  --info-soft: #eaf1fd;
-  --info-text: #1f55ad;
+  /* Signal colours: the shutter is up / nobody knows / the shutter is down */
+  --open: #16865a;
+  --open-soft: #e5f6ed;
+  --open-text: #0d6541;
+  --unsure: #c98a0b;
+  --unsure-soft: #fff4dc;
+  --unsure-text: #855600;
+  --shut: #c2413b;
+  --shut-soft: #fcebea;
+  --shut-text: #9c2c27;
 
-  --focus-ring: color-mix(in srgb, var(--brand-500) 38%, transparent);
+  /* Heatmap ramp, closed → open; low-evidence cells fade towards the surface */
+  --heat-shut: #b8483d;
+  --heat-mid: #efb43d;
+  --heat-open: #2e9a5e;
 
-  /* The dark band at the top of every screen */
-  --header-from: #0d2f36;
-  --header-via: #10444c;
-  --header-to: #155e62;
+  --success: var(--open);
+  --success-soft: var(--open-soft);
+  --success-text: var(--open-text);
+  --warning: var(--unsure);
+  --warning-soft: var(--unsure-soft);
+  --warning-text: var(--unsure-text);
+  --danger: var(--shut);
+  --danger-hover: #a53530;
+  --danger-soft: var(--shut-soft);
+  --danger-text: var(--shut-text);
+  --info: var(--brand-600);
+  --info-soft: var(--brand-50);
+  --info-text: var(--brand-700);
+
+  --focus-ring: color-mix(in srgb, var(--brand-500) 40%, transparent);
+
+  /* The dark band at the top of every screen: night over the city */
+  --header-from: #0b1530;
+  --header-via: #13254d;
+  --header-to: #1b3a72;
   --header-text: #ffffff;
-  --header-glow: rgb(124 212 201 / 0.28);
+  --header-glow: rgb(90 155 251 / 0.3);
+  --header-dawn: rgb(245 165 36 / 0.14);
 
   /* Elevation: a tight contact shadow plus a soft ambient one */
-  --shadow-xs: 0 1px 2px rgb(16 24 40 / 0.05);
-  --shadow-sm: 0 1px 2px rgb(16 24 40 / 0.06), 0 1px 3px rgb(16 24 40 / 0.1);
-  --shadow-md: 0 1px 2px rgb(16 24 40 / 0.05), 0 4px 10px -2px rgb(16 24 40 / 0.09);
-  --shadow-lg: 0 2px 4px -2px rgb(16 24 40 / 0.06), 0 12px 24px -6px rgb(16 24 40 / 0.14);
-  --shadow-xl: 0 4px 8px -4px rgb(16 24 40 / 0.06), 0 24px 48px -12px rgb(16 24 40 / 0.22);
+  --shadow-xs: 0 1px 2px rgb(15 23 42 / 0.05);
+  --shadow-sm: 0 1px 2px rgb(15 23 42 / 0.06), 0 1px 3px rgb(15 23 42 / 0.1);
+  --shadow-md: 0 1px 2px rgb(15 23 42 / 0.05), 0 4px 12px -2px rgb(15 23 42 / 0.09);
+  --shadow-lg: 0 2px 4px -2px rgb(15 23 42 / 0.06), 0 12px 26px -6px rgb(15 23 42 / 0.15);
+  --shadow-xl: 0 4px 8px -4px rgb(15 23 42 / 0.06), 0 24px 48px -12px rgb(15 23 42 / 0.24);
   --highlight: inset 0 1px 0 rgb(255 255 255 / 0.75);
-  --primary-shadow: 0 1px 2px rgb(16 24 40 / 0.14), 0 6px 16px -6px color-mix(in srgb, var(--brand-600) 75%, transparent);
+  --primary-shadow: 0 1px 2px rgb(15 23 42 / 0.14), 0 6px 16px -6px color-mix(in srgb, var(--brand-600) 80%, transparent);
 
   /* Shape */
   --radius-xs: 6px;
   --radius-sm: 10px;
   --radius: 14px;
   --radius-lg: 18px;
-  --radius-xl: 24px;
+  --radius-xl: 22px;
   --radius-pill: 999px;
 
   /* Motion */
@@ -118,7 +138,7 @@
 
   /* Layout */
   --tap: 48px;
-  --content-max: 1160px;
+  --content-max: 1200px;
   --gutter: clamp(16px, 3.5vw, 32px);
   --bottom-nav-h: 68px;
 }

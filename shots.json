@@ -1,0 +1,14 @@
+{
+  "email": "demo@openwhen.test",
+  "password": "demo1234",
+  "pages": [
+    { "name": "login", "path": "/login", "auth": false, "wait": 900 },
+    { "name": "dashboard", "path": "/", "wait": 3500 },
+    { "name": "shop-heatmap", "path": "/shops/54", "wait": 1500 },
+    { "name": "shops", "path": "/shops", "wait": 1200 },
+    { "name": "plan-optimised", "path": "/plan/trips/158", "wait": 2500, "click": "text=Optimise order" },
+    { "name": "plan-day", "path": "/plan", "wait": 1200 },
+    { "name": "routes", "path": "/routes", "wait": 1000 },
+    { "name": "reports", "path": "/reports", "wait": 1500 }
+  ]
+}

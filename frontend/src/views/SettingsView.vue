@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { PhBuildings, PhLinkSimple, PhTrash, PhUserCircle, PhUsersThree } from '@phosphor-icons/vue'
+import { PhBuildings, PhLinkSimple, PhTrash, PhUserCircle, PhUsersThree, PhWarehouse } from '@phosphor-icons/vue'
+import LocationPicker from '@/components/map/LocationPicker.vue'
 import AppPage from '@/components/layout/AppPage.vue'
 import UiCard from '@/components/ui/UiCard.vue'
 import UiButton from '@/components/ui/UiButton.vue'
@@ -31,6 +32,7 @@ const auth = useAuth()
 const toasts = useToasts()
 const confirm = useConfirm()
 const isOwner = computed(() => auth.hasRole('OWNER'))
+const isPlanner = computed(() => auth.hasRole('OWNER', 'DISPATCHER'))
 
 const profile = useForm({ name: auth.user?.name ?? '', locale: (auth.user?.locale ?? 'sq') as Locale })
 const org = useForm({
@@ -40,7 +42,12 @@ const org = useForm({
   timezone: auth.organization?.timezone ?? 'Europe/Tirane',
   currency: auth.organization?.currency ?? 'EUR',
 })
-const invite = useForm({ name: '', role: INVITE_ROLES[0] ?? 'MEMBER' })
+const invite = useForm({ name: '', role: INVITE_ROLES[0] ?? 'DRIVER' })
+const depot = useForm({
+  depotName: auth.organization?.depot?.name ?? '',
+  depotLat: auth.organization?.depot?.lat ?? null,
+  depotLng: auth.organization?.depot?.lng ?? null,
+} as { depotName: string; depotLat: number | null; depotLng: number | null })
 
 const members = ref<Member[]>([])
 const pending = ref<Pending[]>([])
@@ -79,6 +86,14 @@ async function saveOrg() {
   if (saved && auth.organization) {
     auth.organization = saved
     toasts.success(t('settings.saved'))
+  }
+}
+
+async function saveDepot() {
+  const saved = await depot.submit(() => api.put<Organization>('/organization', { ...org.data, ...depot.data }))
+  if (saved) {
+    auth.organization = saved
+    toasts.success(t('settings.depotSaved'))
   }
 }
 
@@ -124,7 +139,7 @@ async function removeMember(m: Member) {
         </form>
       </UiCard>
 
-      <UiCard :title="$t('settings.organization')" :icon="PhBuildings">
+      <UiCard v-if="isPlanner" :title="$t('settings.organization')" :icon="PhBuildings">
         <form class="stack" novalidate @submit.prevent="saveOrg">
           <UiFormErrors :errors="org.errors.value" :trigger="org.submitted.value" />
           <UiField id="f-org-name" :label="$t('auth.organizationName')" :error="org.error('name')">
@@ -156,7 +171,36 @@ async function removeMember(m: Member) {
         </form>
       </UiCard>
 
-      <UiCard class="span-all" :title="$t('settings.team')" :subtitle="$t('settings.teamHint')" :icon="PhUsersThree">
+      <UiCard v-if="isPlanner" class="span-all" :title="$t('settings.depot')" :subtitle="$t('settings.depotHint')" :icon="PhWarehouse">
+        <form class="depot" novalidate @submit.prevent="saveDepot">
+          <UiFormErrors :errors="depot.errors.value" :trigger="depot.submitted.value" />
+          <div class="depot__grid">
+            <div class="stack">
+              <UiField id="f-depotName" :label="$t('settings.depotName')" :error="depot.error('depotName')">
+                <template #default="{ id, invalid, describedby }">
+                  <UiInput :id="id" v-model="depot.data.depotName" :invalid="invalid" :describedby="describedby" :disabled="!isOwner" />
+                </template>
+              </UiField>
+              <div class="grid-2">
+                <UiField id="f-depotLat" :label="$t('shopForm.lat')" :error="depot.error('depotLat')">
+                  <template #default="{ id, invalid, describedby }">
+                    <UiInput :id="id" v-model.number="depot.data.depotLat" type="number" step="0.000001" mono :invalid="invalid" :describedby="describedby" :disabled="!isOwner" />
+                  </template>
+                </UiField>
+                <UiField id="f-depotLng" :label="$t('shopForm.lng')" :error="depot.error('depotLng')">
+                  <template #default="{ id, invalid, describedby }">
+                    <UiInput :id="id" v-model.number="depot.data.depotLng" type="number" step="0.000001" mono :invalid="invalid" :describedby="describedby" :disabled="!isOwner" />
+                  </template>
+                </UiField>
+              </div>
+              <div v-if="isOwner"><UiButton type="submit" :loading="depot.processing.value">{{ $t('common.save') }}</UiButton></div>
+            </div>
+            <LocationPicker v-model:lat="depot.data.depotLat" v-model:lng="depot.data.depotLng" :label="$t('settings.depot')" :height="260" />
+          </div>
+        </form>
+      </UiCard>
+
+      <UiCard v-if="isPlanner" class="span-all" :title="$t('settings.team')" :subtitle="$t('settings.teamHint')" :icon="PhUsersThree">
         <div class="team">
           <ul class="people">
             <li v-for="m in members" :key="m.id" class="person">
@@ -207,6 +251,17 @@ async function removeMember(m: Member) {
 </template>
 
 <style scoped>
+.depot__grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr);
+  gap: 20px;
+  align-items: start;
+}
+@media (max-width: 860px) {
+  .depot__grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
 .team {
   display: flex;
   flex-direction: column;

@@ -20,6 +20,7 @@ export type Organization = {
   locale: Locale
   timezone: string
   currency: string
+  depot: { name: string | null; lat: number; lng: number } | null
 }
 
 export type Me = {

@@ -165,7 +165,8 @@ onBeforeUnmount(() => document.removeEventListener('mousedown', outside))
   color: var(--header-text);
   background:
     radial-gradient(900px 320px at 12% -10%, var(--header-glow), transparent 65%),
-    radial-gradient(700px 260px at 95% 0%, rgb(255 255 255 / 0.07), transparent 60%),
+    radial-gradient(760px 240px at 88% 135%, var(--header-dawn), transparent 70%),
+    radial-gradient(700px 260px at 95% 0%, rgb(255 255 255 / 0.06), transparent 60%),
     linear-gradient(120deg, var(--header-from) 0%, var(--header-via) 55%, var(--header-to) 100%);
   padding-bottom: 64px;
   isolation: isolate;
