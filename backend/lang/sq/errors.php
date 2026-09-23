@@ -11,4 +11,5 @@ return [
     'trip_started' => 'Ky udhëtim ka nisur, ndaj plani i tij nuk mund të ndryshohet më.',
     'driver_needed' => 'Zgjidhni një shofer para publikimit.',
     'order_mismatch' => 'Renditja e re duhet të përmbajë çdo ndalesë të udhëtimit një herë.',
+    'no_phone' => 'Ky dyqan nuk ka ende numër telefoni.',
 ];

@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Models\Observation;
+use App\Models\OutboundMessage;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\Feature\Concerns\BuildsDistributor;
 use Tests\TestCase;
@@ -97,6 +98,22 @@ class ShopApiTest extends TestCase
         $this->getJson("/api/shops/{$theirShop->id}")->assertNotFound();
         $this->putJson("/api/shops/{$theirShop->id}", $this->shop)->assertNotFound();
         $this->getJson("/api/shops/{$theirShop->id}/observations")->assertNotFound();
+    }
+
+    public function test_asking_a_shop_for_its_hours_goes_to_the_outbox_in_the_distributors_language(): void
+    {
+        $owner = $this->owner();
+        $owner->organization->update(['locale' => 'sq', 'name' => 'Qumështorja Dajti']);
+        $shop = $this->shopOf($owner, ['name' => 'Market Ardi', 'contact_name' => 'Ardian', 'phone' => '355691234567']);
+        $silent = $this->shopOf($owner, ['phone' => null]);
+
+        $this->actingAs($owner)->postJson("/api/shops/{$shop->id}/ask-hours")
+            ->assertCreated()
+            ->assertJsonPath('recipient', '355691234567')
+            ->assertJsonPath('templateKey', 'hours_check');
+        $this->assertStringContainsString('Përshëndetje Ardian, jemi Qumështorja Dajti', OutboundMessage::sole()->body);
+
+        $this->postJson("/api/shops/{$silent->id}/ask-hours")->assertUnprocessable();
     }
 
     public function test_drivers_cannot_open_the_shop_list(): void

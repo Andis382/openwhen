@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Hours\HoursComparison;
 use App\Hours\OpenState;
 use App\Hours\ShopHours;
 use App\Hours\Slots;
@@ -51,7 +52,32 @@ class DashboardController extends Controller
             'problemShops' => array_map(fn (array $row) => $row + [
                 'rule' => isset($shops[$row['id']]) ? ($this->hours->rules($shops[$row['id']])[0] ?? null)?->toArray() : null,
             ], $problemShops),
+            'hoursToFix' => $this->hoursToFix(),
         ]);
+    }
+
+    /** Shops whose declared hours the visits contradict, the most contradicted first. */
+    private function hoursToFix(): array
+    {
+        $shops = Shop::where('active', true)->orderBy('name')->get();
+        $this->hours->models($shops);
+        $rows = [];
+        foreach ($shops as $shop) {
+            $days = array_values(array_filter($this->hours->comparison($shop), fn (array $d) => $d['status'] === HoursComparison::MISMATCH));
+            if ($days) {
+                $rows[] = [
+                    'id' => $shop->id,
+                    'name' => $shop->name,
+                    'town' => $shop->town,
+                    'days' => count($days),
+                    'weekday' => $days[0]['weekday'],
+                    'conflict' => $days[0]['conflicts'][0],
+                ];
+            }
+        }
+        usort($rows, fn (array $a, array $b) => [$b['days'], $a['name']] <=> [$a['days'], $b['name']]);
+
+        return ['total' => count($rows), 'shops' => array_slice($rows, 0, 5)];
     }
 
     /**

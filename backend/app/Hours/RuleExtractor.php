@@ -17,6 +17,9 @@ final class RuleExtractor
 
     public const MAX_OPEN_SHARE = 0.2;
 
+    /** "Shut all day" needs visits spread over at least this many minutes, not three lunchtime calls. */
+    public const CLOSED_DAY_SPAN = 240;
+
     private const GAP_BELOW = 0.5;
 
     private const ORDER = [HoursRule::CLOSED_DAY, HoursRule::OPENS_AFTER, HoursRule::CLOSED_WINDOW, HoursRule::CLOSED_AFTER];
@@ -39,7 +42,7 @@ final class RuleExtractor
         $candidates = [];
         for ($day = 1; $day <= 7; $day++) {
             $sightingsOfDay = $byDay[$day];
-            if (count($sightingsOfDay) >= self::MIN_EVIDENCE && $this->openShare($sightingsOfDay) <= self::MAX_OPEN_SHARE) {
+            if ($this->shutAllDay($sightingsOfDay)) {
                 $closedDays[] = $day;
 
                 continue;
@@ -174,6 +177,17 @@ final class RuleExtractor
         }
 
         return new HoursRule($candidate['type'], $days, $candidate['from'], $candidate['to'], $this->openCount($evidence), count($evidence));
+    }
+
+    /** @param list<Sighting> $sightings */
+    private function shutAllDay(array $sightings): bool
+    {
+        if (count($sightings) < self::MIN_EVIDENCE || $this->openShare($sightings) > self::MAX_OPEN_SHARE) {
+            return false;
+        }
+        $minutes = array_map(fn (Sighting $s) => $s->minute, $sightings);
+
+        return max($minutes) - min($minutes) >= self::CLOSED_DAY_SPAN;
     }
 
     /** @param list<Sighting> $sightings */

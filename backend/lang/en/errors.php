@@ -11,4 +11,5 @@ return [
     'trip_started' => 'This trip has already started, so its plan can no longer change.',
     'driver_needed' => 'Choose a driver before publishing.',
     'order_mismatch' => 'The new order must list every stop of the trip once.',
+    'no_phone' => 'This shop has no phone number yet.',
 ];

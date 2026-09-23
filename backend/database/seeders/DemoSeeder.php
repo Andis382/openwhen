@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use App\Hours\DeclaredHours;
 use App\Hours\OpeningHoursModel;
 use App\Hours\Sighting;
+use App\Messaging\Messenger;
 use App\Models\Observation;
 use App\Models\Organization;
 use App\Models\RouteTemplate;
@@ -76,8 +77,9 @@ class DemoSeeder extends Seeder
             $simulator = new VisitSimulator($org->depot(), $clock, $truth);
 
             $this->history($templates, $people['drivers'], $simulator, $clock);
-            $this->today($templates, $simulator, $clock, $people['owner']);
+            $this->today($simulator, $clock);
             app(TripGenerator::class)->generate($clock->today()->addDay());
+            $this->hoursQuestions($org);
         });
 
         $this->command?->info('Demo data ready. Sign in with '.config('product.demo_email').' / '.config('product.demo_password')
@@ -201,7 +203,7 @@ class DemoSeeder extends Seeder
     }
 
     /** Today's trips were optimised and published yesterday; the ones already under way have progressed until now. */
-    private function today(array $templates, VisitSimulator $simulator, LocalTime $clock, User $owner): void
+    private function today(VisitSimulator $simulator, LocalTime $clock): void
     {
         $today = $clock->today();
         $planner = app(TripPlanner::class);
@@ -226,6 +228,27 @@ class DemoSeeder extends Seeder
                 'finished_at' => $run['finishedAt']?->utc(),
             ])->save();
             $this->recount($trip);
+        }
+    }
+
+    /** The dispatcher has already asked a few shops, whose hours the visits contradict, what they really are. */
+    private function hoursQuestions(Organization $org): void
+    {
+        $messenger = app(Messenger::class);
+        foreach (['Market Ardi', 'Bulmetore Gjirokastra', 'Market Te Ura'] as $daysAgo => $name) {
+            $shop = Shop::where('name', $name)->firstOrFail();
+            $message = $messenger->send(
+                $org->id,
+                $shop->phone,
+                $shop->contact_name,
+                'hours_check',
+                $org->locale,
+                ['name' => $shop->contact_name, 'shop' => $shop->name, 'business' => $org->name],
+                relatedType: 'shop',
+                relatedId: $shop->id,
+            );
+            $when = now()->subDays($daysAgo + 1)->setTime(16, 10 + $daysAgo * 7);
+            $message->forceFill(['created_at' => $when, 'sent_at' => $when])->save();
         }
     }
 

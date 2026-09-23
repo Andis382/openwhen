@@ -8,6 +8,7 @@ use App\Hours\OpenState;
 use App\Hours\ShopHours;
 use App\Hours\Slots;
 use App\Http\Requests\ShopRequest;
+use App\Messaging\Messenger;
 use App\Models\Observation;
 use App\Models\RouteTemplate;
 use App\Models\Shop;
@@ -94,6 +95,29 @@ class ShopController extends Controller
         $shop->update($request->shopAttributes());
 
         return response()->json($shop->toApi());
+    }
+
+    /**
+     * Asks the shop on WhatsApp for its real opening hours: the message goes through the outbox,
+     * in the distributor's language, and can be sent from the dispatcher's phone when no
+     * WhatsApp account is connected.
+     */
+    public function askHours(Request $request, Shop $shop, Messenger $messenger): JsonResponse
+    {
+        abort_if($shop->phone === null, 422, __('errors.no_phone'));
+        $organization = $request->user()->organization;
+        $message = $messenger->send(
+            $organization->id,
+            $shop->phone,
+            $shop->contact_name,
+            'hours_check',
+            $organization->locale,
+            ['name' => $shop->contact_name ?: $shop->name, 'shop' => $shop->name, 'business' => $organization->name],
+            relatedType: 'shop',
+            relatedId: $shop->id,
+        );
+
+        return response()->json($message->toApi(), 201);
     }
 
     /** The raw sightings behind the heatmap, newest first. */

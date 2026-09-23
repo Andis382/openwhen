@@ -38,7 +38,8 @@ class ReportsTest extends TestCase
             ->assertJsonPath('closedRate.week.closed', 1)
             ->assertJsonPath('closedRate.week.rate', 0.25)
             ->assertJsonPath('problemShops.0.id', $shops[1]->id)
-            ->assertJsonCount(30, 'daily');
+            ->assertJsonCount(30, 'daily')
+            ->assertJsonStructure(['hoursToFix' => ['total', 'shops']]);
 
         $this->getJson('/api/reports?from=2026-09-01&to=2026-09-21')
             ->assertOk()

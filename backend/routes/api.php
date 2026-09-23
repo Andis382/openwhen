@@ -70,6 +70,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::put('/shops/{shop}', [ShopController::class, 'update'])->whereNumber('shop');
         Route::get('/shops/{shop}/observations', [ShopController::class, 'observations'])->whereNumber('shop');
         Route::get('/shops/{shop}/visits', [ShopController::class, 'visits'])->whereNumber('shop');
+        Route::post('/shops/{shop}/ask-hours', [ShopController::class, 'askHours'])->whereNumber('shop');
         Route::post('/imports/shops', [ImportController::class, 'shops']);
         Route::post('/imports/observations', [ImportController::class, 'observations']);
 

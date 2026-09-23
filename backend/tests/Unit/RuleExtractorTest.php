@@ -123,6 +123,13 @@ class RuleExtractorTest extends TestCase
         $this->assertSame([], $this->rules($this->sawOn([5], ['07:30', '10:00'], false)));
     }
 
+    public function test_lunchtime_visits_alone_do_not_make_a_closed_day(): void
+    {
+        $rules = $this->rules($this->sawOn([3], ['13:05', '13:40', '14:10', '14:35'], false));
+
+        $this->assertNotContains('closed_day', array_map(fn (HoursRule $r) => $r->type, $rules), 'four visits within 90 minutes');
+    }
+
     public function test_closing_early(): void
     {
         $sightings = array_merge(
